@@ -1,25 +1,14 @@
-%%% Journal of Labor Economics (JOLE)
-%%% bibliography style for use with LaTeX2e
-%%% version: 1.0 (27 May 2016)
-%%% license: LaTeX Project Public License (see below)
-%%% This file was created with makebst (see below)
-%%% by Tyler Ransom <tyler (dot) ransom (at) duke (dot) edu>.
-%%% Note: This is an unofficial style file that may not fully comply
-%%% with the JOLE reference guidelines in every detail.
-%%% Please report any problems at
-%%%    http://github.com/tyleransom/jolebib/
-%%% Further information is available at the same link
 %%
 %% This is file `jole.bst',
 %% generated with the docstrip utility.
 %%
 %% The original source files were:
 %%
-%% merlin.mbs  (with options: `ay,nat,pres,nm-revv1,jnrlst,nmdash,nmd-3,mcite,mct-1,mct-x3,keyxyr,dt-beg,yr-per,yrp-per,note-yr,tit-qq,atit-u,vnum-sp,pp-last,num-xser,ser-vol,ser-ed,jnm-x,bkpg-x,add-pub,edby,ppx,abr,ednx,xedn,jabr,etal-xc,url,url-blk,nfss,')
+%% merlin.mbs  (with options: `ay,nat,lang,pres,nm-revv1,jnrlst,nmdash,nmd-3,mcite,mct-1,mct-x2,keyxyr,dt-beg,yr-per,note-yr,thtit-a,vnum-nr,pp-last,num-xser,ser-vol,ser-ed,jnm-x,bkpg-x,add-pub,edparxc,bkedcap,edby,edbyx,ppx,ed,abr,ednx,xedn,jabr,etal-xc,url,url-blk,nfss,')
 %% ----------------------------------------
-%% *** a style as similar as possible to Journal of Labor Economics ***
+%% *** A style as similar as possible to Journal of Labor Economics ***
 %% 
-%% Copyright 1994-2007 Patrick W Daly
+%% Copyright 1994-2011 Patrick W Daly
  % ===============================================================
  % IMPORTANT NOTICE:
  % This bibliographic style (bst) file has been generated from one or
@@ -31,7 +20,7 @@
  % version 1 of the License, or any later version.
  % ===============================================================
  % Name and version information of the main mbs file:
- % \ProvidesFile{merlin.mbs}[2007/04/24 4.20 (PWD, AO, DPC)]
+ % \ProvidesFile{merlin.mbs}[2011/11/18 4.33 (PWD, AO, DPC)]
  %   For use with BibTeX version 0.99a or later
  %-------------------------------------------------------------------
  % This bibliography style file is intended for texts in ENGLISH
@@ -56,7 +45,7 @@
  %   \citep*{key} ==>>               (Jones, Baker, and Smith, 1990)
  %   \citep[chap. 2]{key} ==>>       (Jones et al., 1990, chap. 2)
  %   \citep[e.g.][]{key} ==>>        (e.g. Jones et al., 1990)
- %   \citep[e.g.][p. 32]{key} ==>>   (e.g. Jones et al., p. 32)
+ %   \citep[e.g.][p. 32]{key} ==>>   (e.g. Jones et al., 1990, p. 32)
  %   \citeauthor{key} ==>>           Jones et al.
  %   \citeauthor*{key} ==>>          Jones, Baker, and Smith
  %   \citeyear{key} ==>>             1990
@@ -74,6 +63,7 @@ ENTRY
     institution
     journal
     key
+    language
     month
     note
     number
@@ -177,12 +167,6 @@ FUNCTION {or}
     'skip$
   if$
 }
-FUNCTION {non.stop}
-{ duplicate$
-   "}" * add.period$
-   #-1 #1 substring$ "." =
-}
-
 FUNCTION {new.block.checkb}
 { empty$
   swap$ empty$
@@ -226,10 +210,10 @@ FUNCTION {bbl.etal}
 { "et~al." }
 
 FUNCTION {bbl.editors}
-{ "editors" }
+{ "eds." }
 
 FUNCTION {bbl.editor}
-{ "editor" }
+{ "ed." }
 
 FUNCTION {bbl.edby}
 { "edited by" }
@@ -372,9 +356,11 @@ FUNCTION {bibinfo.warn}
   if$
 }
 FUNCTION {format.url}
-{ url empty$
-    { "" }
-    { "\urlprefix\url{" url * "}" * }
+{
+  url
+  duplicate$ empty$
+    { pop$ "" }
+    { "\urlprefix\url{" swap$ * "}" * }
   if$
 }
 
@@ -500,13 +486,25 @@ FUNCTION {get.bbl.editor}
 FUNCTION {format.editors}
 { editor "editor" format.names duplicate$ empty$ 'skip$
     {
-      "," *
       " " *
       get.bbl.editor
+      capitalize
+   "(" swap$ * ")" *
       *
     }
   if$
 }
+FUNCTION {select.language}
+{ duplicate$ empty$
+    'pop$
+    { language empty$
+        'skip$
+        { "{\selectlanguage{" language * "}" * swap$ * "}" * }
+      if$
+    }
+    if$
+}
+
 FUNCTION {format.note}
 {
  note empty$
@@ -528,11 +526,13 @@ FUNCTION {format.note}
 
 FUNCTION {format.title}
 { title
+  duplicate$ empty$ 'skip$
+    { "t" change.case$ }
+  if$
   "title" bibinfo.check
   duplicate$ empty$ 'skip$
     {
-      "\enquote{" swap$ *
-      add.period$ "}" *
+      select.language
     }
   if$
 }
@@ -692,6 +692,7 @@ FUNCTION {format.btitle}
   duplicate$ empty$ 'skip$
     {
       emphasize
+      select.language
     }
   if$
 }
@@ -822,7 +823,7 @@ FUNCTION {format.vol.num.pages}
         'skip$
       if$
       swap$
-      "~(" swap$ * ")" *
+      ", " bbl.nr * number tie.or.space.prefix pop$ * swap$ *
     }
   if$ *
 }
@@ -856,7 +857,7 @@ FUNCTION {format.in.ed.booktitle}
       if$
       editor "editor" format.names.ed duplicate$ empty$ 'pop$
         {
-          bbl.edby
+          get.bbl.editor
           " " * swap$ *
           swap$
           "," *
@@ -986,6 +987,7 @@ FUNCTION {book}
   author empty$
     { format.editors "author and editor" output.check
       editor format.key output
+      add.blank
       name.or.dash
     }
     { format.authors output.nonnull
@@ -1163,7 +1165,7 @@ FUNCTION {mastersthesis}
   name.or.dash
   format.date "year" output.check
   date.block
-  format.btitle
+  format.title
   "title" output.check
   new.block
   bbl.mthesis format.thesis.type output.nonnull
@@ -1199,7 +1201,7 @@ FUNCTION {phdthesis}
   name.or.dash
   format.date "year" output.check
   date.block
-  format.btitle
+  format.title
   "title" output.check
   new.block
   bbl.phdthesis format.thesis.type output.nonnull
@@ -1321,7 +1323,7 @@ FUNCTION {format.lab.names}
       nameptr #1 >
         {
           nameptr #2 =
-          numnames #3 > and
+          numnames #2 > and
             { "others" 't :=
               #1 'namesleft := }
             'skip$
@@ -1436,9 +1438,10 @@ FUNCTION {sort.format.names}
         {
           "   "  *
           namesleft #1 = t "others" = and
-            { "zzzzz" * }
-            { t sortify * }
+            { "zzzzz" 't := }
+            'skip$
           if$
+          t sortify *
         }
         { t sortify * }
       if$
@@ -1529,17 +1532,30 @@ FUNCTION {presort}
 ITERATE {presort}
 SORT
 STRINGS { last.label next.extra }
-INTEGERS { last.extra.num number.label }
+INTEGERS { last.extra.num last.extra.num.extended last.extra.num.blank number.label }
 FUNCTION {initialize.extra.label.stuff}
 { #0 int.to.chr$ 'last.label :=
   "" 'next.extra :=
   #0 'last.extra.num :=
+  "a" chr.to.int$ #1 - 'last.extra.num.blank :=
+  last.extra.num.blank 'last.extra.num.extended :=
   #0 'number.label :=
 }
 FUNCTION {forward.pass}
 { last.label label =
     { last.extra.num #1 + 'last.extra.num :=
-      last.extra.num int.to.chr$ 'extra.label :=
+      last.extra.num "z" chr.to.int$ >
+       { "a" chr.to.int$ 'last.extra.num :=
+         last.extra.num.extended #1 + 'last.extra.num.extended :=
+       }
+       'skip$
+      if$
+      last.extra.num.extended last.extra.num.blank >
+        { last.extra.num.extended int.to.chr$
+          last.extra.num int.to.chr$
+          * 'extra.label := }
+        { last.extra.num int.to.chr$ 'extra.label := }
+      if$
     }
     { "a" chr.to.int$ 'last.extra.num :=
       "" 'extra.label :=
@@ -1588,13 +1604,13 @@ FUNCTION {begin.bib}
   if$
   "\begin{thebibliography}{" number.label int.to.str$ * "}" *
   write$ newline$
-  "\newcommand{\enquote}[1]{``#1''}"
-  write$ newline$
   "\providecommand{\natexlab}[1]{#1}"
   write$ newline$
   "\providecommand{\url}[1]{\texttt{#1}}"
   write$ newline$
   "\providecommand{\urlprefix}{URL }"
+  write$ newline$
+  "\providecommand{\selectlanguage}[1]{\relax}"
   write$ newline$
 }
 EXECUTE {begin.bib}
@@ -1607,4 +1623,4 @@ FUNCTION {end.bib}
 EXECUTE {end.bib}
 %% End of customized bst file
 %%
-%% End of file `jpe.bst'.
+%% End of file `jole.bst'.
