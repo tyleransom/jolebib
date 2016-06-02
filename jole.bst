@@ -1,3 +1,15 @@
+%%% Journal of Labor Economics (JOLE)
+%%% bibliography style for use with LaTeX2e
+%%% version: 1.0 (1 June 2016)
+%%% license: LaTeX Project Public License (see below)
+%%% This file was created with makebst (see below)
+%%% by Tyler Ransom <tyler (dot) ransom (at) duke (dot) edu>.
+%%% Note: This is an unofficial style file that may not fully comply
+%%% with the JOLE reference guidelines in every detail.
+%%% Please report any problems at
+%%%    https://github.com/tyleransom/jolebib/issues
+%%% Further information is available at
+%%%    https://github.com/tyleransom/jolebib/
 %%
 %% This is file `jole.bst',
 %% generated with the docstrip utility.
@@ -7,6 +19,7 @@
 %% merlin.mbs  (with options: `ay,nat,lang,pres,nm-revv1,jnrlst,nmdash,nmd-3,mcite,mct-1,mct-x2,keyxyr,dt-beg,yr-per,note-yr,thtit-a,vnum-nr,pp-last,num-xser,ser-vol,ser-ed,jnm-x,bkpg-x,add-pub,edparxc,bkedcap,edby,edbyx,ppx,ed,abr,ednx,xedn,jabr,etal-xc,url,url-blk,nfss,')
 %% ----------------------------------------
 %% *** A style as similar as possible to Journal of Labor Economics ***
+%% *** Note that I had to hand-code ``sentence case'' of book titles and collection titles ***
 %% 
 %% Copyright 1994-2011 Patrick W Daly
  % ===============================================================
@@ -691,7 +704,8 @@ FUNCTION {format.btitle}
 { title "title" bibinfo.check
   duplicate$ empty$ 'skip$
     {
-      emphasize
+	  "t" change.case$
+	  emphasize
       select.language
     }
   if$
@@ -847,6 +861,7 @@ FUNCTION {format.chapter.pages}
 FUNCTION {format.booktitle}
 {
   booktitle "booktitle" bibinfo.check
+  "t" change.case$
   emphasize
 }
 FUNCTION {format.in.ed.booktitle}
