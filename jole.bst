@@ -837,7 +837,7 @@ FUNCTION {format.vol.num.pages}
         'skip$
       if$
       swap$
-      ", " bbl.nr * number tie.or.space.prefix pop$ * swap$ *
+      "~(" swap$ * ")" *
     }
   if$ *
 }
