@@ -68,6 +68,7 @@ ENTRY
     author
     booktitle
     chapter
+    doi
     edition
     editor
     eid
@@ -376,6 +377,12 @@ FUNCTION {format.url}
 { url empty$
     { "" }
     { "\urlprefix\url{" url * "}" * }
+  if$
+}
+FUNCTION {format.doi}
+{ doi empty$
+    { "" }
+    { "\doiprefix\bibdoi{" doi * "}" * }
   if$
 }
 
@@ -979,6 +986,8 @@ FUNCTION {article}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1016,6 +1025,8 @@ FUNCTION {book}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1032,6 +1043,8 @@ FUNCTION {booklet}
   address "address" bibinfo.check output
   new.block
   format.url output
+  new.block
+  format.doi output
   new.block
   format.note output
   fin.entry
@@ -1075,6 +1088,8 @@ FUNCTION {inbook}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1103,6 +1118,8 @@ FUNCTION {incollection}
   format.pages "pages" output.check
   new.block
   format.url output
+  new.block
+  format.doi output
   new.block
   format.note output
   fin.entry
@@ -1134,6 +1151,8 @@ FUNCTION {inproceedings}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1152,6 +1171,8 @@ FUNCTION {manual}
   format.edition output
   new.block
   format.url output
+  new.block
+  format.doi output
   new.block
   format.note output
   fin.entry
@@ -1173,6 +1194,8 @@ FUNCTION {mastersthesis}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1189,6 +1212,8 @@ FUNCTION {misc}
   howpublished "howpublished" bibinfo.check output
   new.block
   format.url output
+  new.block
+  format.doi output
   new.block
   format.note output
   fin.entry
@@ -1208,6 +1233,8 @@ FUNCTION {phdthesis}
   address "address" bibinfo.check output
   new.block
   format.url output
+  new.block
+  format.doi output
   new.block
   format.note output
   fin.entry
@@ -1232,6 +1259,8 @@ FUNCTION {presentation}
     if$
   new.block
   format.url output
+  new.block
+  format.doi output
   fin.entry
 }
 
@@ -1255,6 +1284,8 @@ FUNCTION {proceedings}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1275,6 +1306,8 @@ FUNCTION {techreport}
   new.block
   format.url output
   new.block
+  format.doi output
+  new.block
   format.note output
   fin.entry
 }
@@ -1289,6 +1322,8 @@ FUNCTION {unpublished}
   format.title "title" output.check
   new.block
   format.url output
+  new.block
+  format.doi output
   new.block
   format.note "note" output.check
   fin.entry
@@ -1596,6 +1631,10 @@ FUNCTION {begin.bib}
   "\providecommand{\url}[1]{\texttt{#1}}"
   write$ newline$
   "\providecommand{\urlprefix}{URL }"
+  write$ newline$
+  "\providecommand{\doiprefix}{}"
+  write$ newline$
+  "\providecommand{\bibdoi}[1]{\ifx\href\undefined DOI: \url{https://doi.org/#1}\else\href{https://doi.org/#1}{DOI}\fi}"
   write$ newline$
 }
 EXECUTE {begin.bib}
